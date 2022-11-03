@@ -9,3 +9,9 @@ class AccountsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = "__all__"
+
+
+class AccountsDeleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = ["is_delete"]
