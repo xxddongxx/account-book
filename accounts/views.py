@@ -102,3 +102,26 @@ class AccountRestoration(APIView):
         serializer = serializers.AccountsSerializer(accounts, many=True)
         if serializer.data:
             return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AccountRestorationDetail(APIView):
+    permission_classes = [IsOwner]
+
+    def get_account(self, pk, author):
+        try:
+            return Account.objects.get(pk=pk, author=author, is_delete=True)
+        except Account.DoesNotExist:
+            """
+            TODO Not Found
+            """
+            return Response({"message": "Not Found"}, status=status.HTTP_404_NOT_FOUND)
+
+    def get(self, request, pk):
+        """
+        삭제된 가계부 상세
+        GET /api/v1/accounts/restoration/<pk>/
+        """
+        user = request.user
+        account = self.get_account(pk=pk, author=user)
+        serializer = serializers.AccountsSerializer(account)
+        return Response(serializer.data, status=status.HTTP_200_OK)
