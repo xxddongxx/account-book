@@ -58,3 +58,16 @@ class AccountDetail(APIView):
         account = self.get_account(pk=pk, author=user)
         serializer = serializers.AccountsSerializer(account)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, pk):
+        """
+        가계분
+        PUT /api/v1/accounts/
+        """
+        user = request.user
+        account = self.get_account(pk=pk, author=user)
+        serializer = serializers.AccountsSerializer(account, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
