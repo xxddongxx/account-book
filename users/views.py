@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from users import serializers
@@ -21,7 +21,7 @@ class UsersRegister(APIView):
             user.save()
             serializer = serializers.UsersRegisterSerializer(user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
 
 class Login(APIView):
@@ -66,4 +66,17 @@ class UsersDetail(APIView):
         user = User.objects.get(pk=pk)
         serializer = serializers.UsersSerializer(user)
 
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UsersView(APIView):
+    permission_classes = [IsAdminUser]
+    """
+    회원 목록
+    GET /api/v1/users/
+    """
+
+    def get(self, request):
+        users = User.objects.all()
+        serializer = serializers.UsersSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
