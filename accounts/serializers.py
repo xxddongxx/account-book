@@ -11,7 +11,7 @@ class AccountsSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class AccountsDeleteSerializer(serializers.ModelSerializer):
+class AccountsIsDeleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = ["is_delete"]

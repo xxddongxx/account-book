@@ -82,7 +82,7 @@ class AccountDetail(APIView):
         user = request.user
         account = self.get_account(pk=pk, author=user)
         delete = {"is_delete": "true"}
-        serializer = serializers.AccountsDeleteSerializer(account, data=delete)
+        serializer = serializers.AccountsIsDeleteSerializer(account, data=delete)
         if serializer.is_valid():
             serializer.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -125,3 +125,17 @@ class AccountRestorationDetail(APIView):
         account = self.get_account(pk=pk, author=user)
         serializer = serializers.AccountsSerializer(account)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, pk):
+        """
+        삭제된 가계부 복구
+        PUT /api/v1/accounts/restoration/<pk>/
+        """
+        user = request.user
+        account = self.get_account(pk=pk, author=user)
+        undelete = {"is_delete": "false"}
+        serializer = serializers.AccountsIsDeleteSerializer(account, data=undelete)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
