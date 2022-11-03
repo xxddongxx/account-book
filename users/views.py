@@ -1,5 +1,6 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from users import serializers
@@ -37,3 +38,17 @@ class Login(APIView):
                 {"status": True, "message": "Login Success"}, status=status.HTTP_200_OK
             )
         return Response({"status": False}, status=status.HTTP_404_NOT_FOUND)
+
+
+class Logout(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """
+        로그아웃
+        POST /api/v1/users/logout/
+        """
+        logout(request)
+        return Response(
+            {"status": True, "message": "Logout Success"}, status=status.HTTP_200_OK
+        )
