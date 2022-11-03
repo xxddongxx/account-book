@@ -33,6 +33,7 @@ class Accounts(APIView):
             accounts = Account.objects.all()
         else:
             accounts = Account.objects.filter(author=user, is_delete=False)
+
         serializer = serializers.AccountsSerializer(accounts, many=True)
         if serializer.data:
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
@@ -86,3 +87,18 @@ class AccountDetail(APIView):
             serializer.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class AccountRestoration(APIView):
+    permission_classes = [IsOwner]
+
+    def get(self, request):
+        """
+        가계부 삭제 항목
+        GET /api/v1/accounts/restoration/
+        """
+        user = request.user
+        accounts = Account.objects.filter(author=user, is_delete=True)
+        serializer = serializers.AccountsSerializer(accounts, many=True)
+        if serializer.data:
+            return Response(serializer.data, status=status.HTTP_200_OK)
