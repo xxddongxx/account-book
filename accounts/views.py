@@ -22,3 +22,14 @@ class Accounts(APIView):
             serializer.save(author=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request):
+        """
+        가계부 목록
+        GET /api/v1/accounts/
+        """
+        user = request.user
+        accounts = Account.objects.filter(author=user)
+        serializer = serializers.AccountsSerializer(accounts, many=True)
+        if serializer.data:
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
