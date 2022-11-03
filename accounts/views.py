@@ -1,5 +1,5 @@
 from rest_framework import status
-from rest_framework.exceptions import NotFound
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -18,10 +18,11 @@ class Accounts(APIView):
         POST /api/v1/accounts/
         """
         serializer = serializers.AccountsSerializer(data=request.data)
+
         if serializer.is_valid():
             serializer.save(author=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
         """
@@ -35,21 +36,17 @@ class Accounts(APIView):
             accounts = Account.objects.filter(author=user, is_delete=False)
 
         serializer = serializers.AccountsSerializer(accounts, many=True)
+
         if serializer.data:
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class AccountDetail(APIView):
     permission_classes = [IsOwner]
 
     def get_account(self, pk, author):
-        try:
-            return Account.objects.get(pk=pk, author=author, is_delete=False)
-        except Account.DoesNotExist:
-            """
-            TODO Not Found
-            """
-            return Response({"message": "Not Found"}, status=status.HTTP_404_NOT_FOUND)
+        return get_object_or_404(Account, pk=pk, author=author, is_delete=False)
 
     def get(self, request, pk):
         """
@@ -69,6 +66,7 @@ class AccountDetail(APIView):
         user = request.user
         account = self.get_account(pk=pk, author=user)
         serializer = serializers.AccountsSerializer(account, data=request.data)
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -83,6 +81,7 @@ class AccountDetail(APIView):
         account = self.get_account(pk=pk, author=user)
         delete = {"is_delete": "true"}
         serializer = serializers.AccountsIsDeleteSerializer(account, data=delete)
+
         if serializer.is_valid():
             serializer.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -100,21 +99,17 @@ class AccountRestoration(APIView):
         user = request.user
         accounts = Account.objects.filter(author=user, is_delete=True)
         serializer = serializers.AccountsSerializer(accounts, many=True)
+
         if serializer.data:
             return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class AccountRestorationDetail(APIView):
     permission_classes = [IsOwner]
 
     def get_account(self, pk, author):
-        try:
-            return Account.objects.get(pk=pk, author=author, is_delete=True)
-        except Account.DoesNotExist:
-            """
-            TODO Not Found
-            """
-            return Response({"message": "Not Found"}, status=status.HTTP_404_NOT_FOUND)
+        return get_object_or_404(Account, pk=pk, author=author, is_delete=True)
 
     def get(self, request, pk):
         """
@@ -135,7 +130,8 @@ class AccountRestorationDetail(APIView):
         account = self.get_account(pk=pk, author=user)
         undelete = {"is_delete": "false"}
         serializer = serializers.AccountsIsDeleteSerializer(account, data=undelete)
+
         if serializer.is_valid():
             serializer.save()
-            return Response(status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
