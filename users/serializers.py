@@ -10,3 +10,15 @@ class UsersRegisterSerializer(serializers.ModelSerializer):
             "username",
             "password",
         ]
+
+
+class UsersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "username",
+            "name",
+            "email",
+            "phone",
+        ]

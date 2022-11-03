@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from users import serializers
+from users.models import User
 
 
 class UsersRegister(APIView):
@@ -52,3 +53,17 @@ class Logout(APIView):
         return Response(
             {"status": True, "message": "Logout Success"}, status=status.HTTP_200_OK
         )
+
+
+class UsersDetail(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        """
+        회원 정보
+        GET /api/v1/users/{pk}/
+        """
+        user = User.objects.get(pk=pk)
+        serializer = serializers.UsersSerializer(user)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
