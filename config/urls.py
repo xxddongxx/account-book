@@ -20,4 +20,13 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api-auth/", include("rest_framework.urls")),
     path("api/v1/users/", include("users.urls")),
+
 ]
+
+# 토큰
+"""
+TODO Token
+path("token/", TokenObtainPairView.as_view()),
+path("token/refresh", TokenRefreshView.as_view()),
+path("token/verify/", TokenVerifyView.as_view()),
+"""
