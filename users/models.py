@@ -15,4 +15,4 @@ class User(AbstractUser):
     phone = models.CharField(max_length=20, verbose_name="phone")
 
     def __str__(self):
-        return self.name
+        return self.username

@@ -4,38 +4,40 @@ from users.models import User
 
 """
 TODO Token
+"""
+
+
 class UsersRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = [
-            "username",
-            "password",
-        ]
+        fields = ["username", "password"]
+        extra_kwargs = {"password": {"write_only": True}}
 
-        def save(self, request):
-            user = super().save()
-            user.username = self.validated_data["username"]
-            user.set_password(self.validated_data["password"])
-            user.save()
-            return user
-
-        def validate(self, data):
-            username = data.get("username", None)
-            if User.objects.filter(username=username).exists():
-                raise serializers.ValidationError("user already exists")
-            return data
+    def create(self, validated_data):
+        username = validated_data.get("username")
+        password = validated_data.get("password")
+        user = User(username=username)
+        user.set_password(password)
+        user.save()
+        return user
 
 
+"""
 class LoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'password']
 """
 
-class UsersRegisterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['username', 'password',]
+
+# class UsersRegisterSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = [
+#             "username",
+#             "password",
+#         ]
+
 
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:

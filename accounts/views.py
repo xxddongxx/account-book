@@ -97,7 +97,10 @@ class AccountRestoration(APIView):
         GET /api/v1/accounts/restoration/
         """
         user = request.user
-        accounts = Account.objects.filter(author=user, is_delete=True)
+        if user.is_staff:
+            accounts = Account.objects.all()
+        else:
+            accounts = Account.objects.filter(author=user, is_delete=True)
         serializer = serializers.AccountsSerializer(accounts, many=True)
 
         if serializer.data:
