@@ -22,11 +22,3 @@ urlpatterns = [
     path("api/v1/users/", include("users.urls")),
     path("api/v1/accounts/", include("accounts.urls")),
 ]
-
-# 토큰
-"""
-TODO Token
-path("token/", TokenObtainPairView.as_view()),
-path("token/refresh", TokenRefreshView.as_view()),
-path("token/verify/", TokenVerifyView.as_view()),
-"""
