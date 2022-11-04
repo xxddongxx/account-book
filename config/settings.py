@@ -9,7 +9,9 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+import datetime
 import os, environ
+
 from pathlib import Path
 
 env = environ.Env(
@@ -39,6 +41,7 @@ ALLOWED_HOSTS = []
 
 THIRD_PARTY_APPS = [
     "rest_framework",
+    "rest_framework_simplejwt.token_blacklist",
 ]
 
 CUSTOM_APPS = [
@@ -91,7 +94,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES={
+DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
@@ -140,3 +143,27 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# AUTH
+AUTH_USER_MODEL = "users.User"
+
+# REST Framework
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+}
+
+REST_USE_JWT = True
+
+SIMPLE_JWT = {
+    # access token이 유효한 기간
+    "ACCESS_KEN_LIFETIME": datetime.timedelta(hours=2),
+    # refresh token이 유효한 기간
+    "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=7),
+    # True로 설정할 경우, refresh token을 보내면 새로운 access token과 refresh token이 반환
+    "ROTATE_REFRESH_TOKENS": False,
+    # True로 설정할 경우, 기존에 있던 refresh token은 blacklist가 된다.
+    "BLACKLIST_AFTER_ROTATION": True,
+    "TOKEN_USER_CLASS": "users.User",
+}
