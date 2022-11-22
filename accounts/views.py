@@ -33,7 +33,7 @@ class Accounts(APIView):
         user = request.user
 
         if user.is_staff:
-            accounts = Account.objects.all()
+            accounts = Account.objects.filter(is_delete=False)
         else:
             accounts = Account.objects.filter(author=user, is_delete=False)
 
@@ -89,6 +89,7 @@ class AccountDetail(APIView):
 
 
 class AccountRestoration(APIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsOwner]
 
     def get(self, request):
@@ -98,9 +99,10 @@ class AccountRestoration(APIView):
         """
         user = request.user
         if user.is_staff:
-            accounts = Account.objects.all()
+            accounts = Account.objects.filter(is_delete=True)
         else:
             accounts = Account.objects.filter(author=user, is_delete=True)
+
         serializer = serializers.AccountsSerializer(accounts, many=True)
 
         if serializer.data:
@@ -109,6 +111,7 @@ class AccountRestoration(APIView):
 
 
 class AccountRestorationDetail(APIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsOwner]
 
     def get_account(self, pk, author):
@@ -131,10 +134,7 @@ class AccountRestorationDetail(APIView):
         """
         user = request.user
         account = self.get_account(pk=pk, author=user)
-        undelete = {"is_delete": "false"}
-        serializer = serializers.AccountsIsDeleteSerializer(account, data=undelete)
+        account.is_delete = False
+        account.save()
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_204_NO_CONTENT)
