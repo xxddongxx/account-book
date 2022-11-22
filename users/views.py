@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
@@ -86,16 +87,20 @@ class Logout(APIView):
 
 
 class UsersDetail(APIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+
+    def get_user(self, pk):
+        return get_object_or_404(User, pk=pk)
 
     def get(self, request, pk):
         """
         회원 정보
         GET /api/v1/users/{pk}/
         """
-        user = User.objects.get(pk=pk)
+        user = self.get_user(pk=pk)
         request_user = request.user
-        if request_user == user or request.user.is_staff:
+        if request_user == user or request_user.is_staff:
             serializer = serializers.UsersSerializer(user)
 
             return Response(serializer.data, status=status.HTTP_200_OK)
