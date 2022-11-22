@@ -108,6 +108,7 @@ class UsersDetail(APIView):
 
 
 class UsersView(APIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
     """
     회원 목록
