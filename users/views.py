@@ -24,9 +24,14 @@ class UsersRegister(APIView):
 
 
 class Login(APIView):
+    """
+    로그인
+    POST /api/v1/users/login/
+    """
+
     def post(self, request):
         user = authenticate(
-            username=request.data.get("username"), password=request.data.get("password")
+            email=request.data.get("email"), password=request.data.get("password")
         )
         if user is not None:
             serializer = serializers.UsersSerializer(user)
@@ -46,7 +51,9 @@ class Login(APIView):
             )
             return response
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"message": "로그인에 실패하였습니다."}, status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class Logout(APIView):
