@@ -8,6 +8,6 @@ urlpatterns = [
     # path("<int:pk>/", views.UsersDetail.as_view()),
     path("register/", views.UsersRegister.as_view(), name="register"),
     path("login/", views.Login.as_view(), name="login"),
-    # path("logout/", views.Logout.as_view()),
+    path("logout/", views.Logout.as_view()),
     path("token/refresh/", TokenRefreshView.as_view()),
 ]
