@@ -39,14 +39,14 @@
 * Database: SQLite
 * ETC: Git, Github
 
-## floppy_disk: 모델링
+## :floppy_disk: 모델링
 <p align="center"><img src="./static/image/Account_ERD.png" width="80%" height="auto"></p>
 
 * `User(사용자)`, `Account(가계부)` 모델링
 * `User(사용자)`와 `Account(가계부)`은 1:N관계
 
 ## :hourglass_flowing_sand: API Test
-* 유저관리: 이메일을 ID로 회원가입, 로그인 등 테스트 코드 작성
+* 유저 관리: 이메일을 ID로 회원가입, 로그인 등 테스트 코드 작성
 * 가계부: 작성 실패, 작성, 가계부 목록, 삭제, 복구 등 테스트 코드 작성
 
 <p align="center"><img src="./static/image/Account_test.png" width="80%" height="auto"></p>
