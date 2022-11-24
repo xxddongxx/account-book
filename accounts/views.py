@@ -23,7 +23,9 @@ class Accounts(APIView):
         if serializer.is_valid():
             serializer.save(author=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"message": "Fail Create Account"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     def get(self, request):
         """
@@ -40,7 +42,7 @@ class Accounts(APIView):
         serializer = serializers.AccountsSerializer(accounts, many=True)
 
         if serializer.data:
-            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
