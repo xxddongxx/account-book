@@ -1,24 +1,28 @@
 # :dollar: account-book
-페이히어 가계부 서비스 개발
+본인의 소비내역을 기록/관리하는 서비스
 
 # :bookmark_tabs: 목차
-* [account-book](#account-book)
-  * [목차](#목차)
-  * [프로젝트 요구사항](#프로젝트-요구사항)
-  * [API Docs](#api-docs)
-    * [회원 가입](#회원-가입)
-    * [로그인](#로그인)
-    * [로그아웃](#로그아웃)
-    * [가계부 등록](#가계부-등록)
-    * [가계부 목록](#가계부-목록)
-    * [가계부 상세](#가계부-상세)
-    * [가계부 수정](#가계부-수정)
-    * [가계부 삭제](#가계부-삭제)
-    * [가계부 삭제 목록](#가계부-삭제-목록)
-    * [가계부 삭제 복구](#가계부-삭제-복구)
+* [개발 기간](#calendar-개발-기간)
+* [프로젝트 개요](#books-프로젝트-개요)
+    * [프로젝트 설명](#page_facing_up-프로젝트-설명))
+    * [프로젝트 요구사항](#clipboard-프로젝트-요구사항)
+    * [사용 기술](#hammer-사용-기술)
+    * [모델링](#floppy_disk-모델링)
+    * [API Test](#hourglass_flowing_sand-api-test)
+    * [프로젝트 분석](#mag_right-프로젝트-분석)
+* [API Endpoint](#pushpin-api-endpoint)
+    * [User](#user)
+    * [Account](#account)
 
 
-# :clipboard: 프로젝트 요구사항
+# :calendar: 개발 기간
+2022.11.03. ~ 2022.11.04.
+
+# :books: 프로젝트 개요
+## :page_facing_up: 프로젝트 설명
+요구사항을 만족하는 백엔드 서비스 개발
+
+## :clipboard: 프로젝트 요구사항
 1. 고객은 이메일과 비밀번호 입력을 통해서 회원가입을 할 수 있습니다.
 2. 고객은 회원 가입이후, 로그인과 로그아웃을 할 수 있습니다.
 3. 고객은 로그인 이후 가계부 관련 아래의 행동을 할 수 있습니다.
@@ -30,155 +34,55 @@
    * 가계부에서 상세한 세부 내역을 볼 수 있습니다.
 4. 로그인하지 않은 고객은 가계부 내역에 대한 접근 제한 처리가 되어야 합니다.
 
-# :books: API Docs
-## 회원 가입
+## :hammer: 사용 기술
+* Back-End: Python, Django, Django REST Framework
+* Database: SQLite
+* ETC: Git, Github
 
-> Method: POST<br>
-URL: /api/v1/users/register/<br>
-Description: SimpleJWT Token 발행<br>
-Request Example
-```json
-{
-    "username": "test@test.com",
-    "password": "12341234"
-}
-```
-> Response Example
-```json
-{
-    "username": "test2@test.com"
-}
-```
-##  로그인
-> Method: POST<br>
-URL: /api/v1/users/login/<br>
-Request Example
-```json
-{
-    "username": "test@test.com",
-    "password": "12341234"
-}
-```
-> Response Example
-```json
-{
-    "refresh": "token_key1",
-    "access": "token_key2"
-}
-```
-##  로그아웃(* TODO *)
-> Method: POST<br>
-URL: /api/v1/users/logout/<br>
-Request Example
-```json
-{
-    TODO
-}
-```
-> Response Example
-```json
-{
-    TODO
-}
-```
-##  가계부 등록
-> Method: POST<br>
-URL: /api/v1/accounts/<br>
-Request Example
-```json
-{
-    "amount": 5000,
-    "memo": "맥주 한 잔"
-}
-```
-> Response Example
-```json
-{
-    "amount": 5000,
-    "memo": "맥주 한 잔",
-    "is_delete": false
-}
-```
-##  가계부 목록
-> Method: GET<br>
-URL: /api/v1/accounts/<br>
-Responses
-```json
-[
-    {
-        "amount": 5000,
-        "memo": "맥주 한 잔",
-        "is_delete": false
-    },
-    {
-        "amount": 15000,
-        "memo": "맥주 세 잔",
-        "is_delete": false
-    },
-    ...
-]
-```
-##  가계부 상세
-> Method: GET<br>
-URL: /api/v1/accounts/account_id/<br>
-Responses
-```json
-{
-    "amount": 5000,
-    "memo": "맥주 한 잔",
-    "is_delete": false
-}
-```
-##  가계부 수정
-> Method: PUT<br>
-URL: /api/v1/accounts/account_id/<br>
-Request Example
-```json
-{
-    "amount": 15000,
-    "memo": "맥주 세 잔",
-    "is_delete": false
-}
-```
-> Response Example
-```json
-{
-    "amount": 15000,
-    "memo": "맥주 세 잔",
-    "is_delete": false
-}
-```
-##  가계부 삭제
-> Method: DELETE<br>
-URL: /api/v1/accounts/account_id/<br>
-##  가계부 삭제 목록
-> Method: GET<br>
-URL: /api/v1/accounts/restoration/<br>
-Resonse
-```json
-[
-    {
-        "amount": 5000,
-        "memo": "맥주 한 잔",
-        "is_delete": true
-    },
-    {
-        "amount": 15000,
-        "memo": "맥주 세 잔",
-        "is_delete": true
-    },
-    ...
-]
-```
-##  가계부 삭제 복구
-> Method: POST<br>
-URL: /api/v1/accounts/restoration/account_id/<br>
-Resonse Example
-```json
-{
-    "amount": 15000,
-    "memo": "맥주 세 잔",
-    "is_delete": false
-}
-```
+## floppy_disk: 모델링
+<p align="center"><img src="./static/image/Account_ERD.png" width="80%" height="auto"></p>
 
+* `User(사용자)`, `Account(가계부)` 모델링
+* `User(사용자)`와 `Account(가계부)`은 1:N관계
+
+## :hourglass_flowing_sand: API Test
+* 유저관리: 이메일을 ID로 회원가입, 로그인 등 테스트 코드 작성
+* 가계부: 작성 실패, 작성, 가계부 목록, 삭제, 복구 등 테스트 코드 작성
+
+<p align="center"><img src="./static/image/Account_test.png" width="80%" height="auto"></p>
+
+
+## :mag_right: 프로젝트 분석
+* `users`, `accounts` 2개의 앱으로 분리하여 관리
+* 유저 관리
+    * 회원가입: 추후 JWT 토큰 발급
+    * 로그인: JWT 토큰을 이용한 인증
+* 가계부 관리
+    * 가계부 생성
+        * 금액과 메모 필요 등 필요
+        * 추수 `is_payment`로 지출/수입 관리
+    * 가계부 삭제 및 복구
+        * 작성한 가계부를 is_delete를 이용한 삭제/복구 구현
+
+# :pushpin: API Endpoint
+## User
+|URL|Method|Action|Description|
+|:---|:---:|:---:|:---|
+|/api/v1/users/register/|POST|-|사용자 회원가입|
+|/api/v1/users/login/|POST|-|사용자 로그인|
+|/api/v1/users/logout/|POST|-|사용자 로그아웃|
+|/api/v1/users/|GET|List|사용자 목록(staff)|
+|/api/v1/users/{pk}/|GET|Retrieve|사용자 상세|
+|/api/v1/users/token/refresh/|POST|-|refresh 토큰을 통한 access 토큰 재발급|
+
+## Account
+|URL|Method|Action|Description|
+|:---|:---:|:---:|:---|
+|/api/v1/accounts/|POST|-|가계부 생성|
+|/api/v1/accounts/|GET|List|가계부 목록|
+|/api/v1/accounts/{pk}/|GET|Retrieve|가계부 상세|
+|/api/v1/accounts/{pk}/|PUT|Update|가계부 갱신|
+|/api/v1/accounts/{pk}/|DELETE|Delete|가계부 삭제|
+|/api/v1/accounts/restoration/|GET|List|가계부 삭제 목록|
+|/api/v1/accounts/restoration/{pk}/|GET|Retrieve|삭제된 가계부 상세|
+|/api/v1/accounts/restoration/{pk}/|PUT|Update|삭제된 가계부 복구|
