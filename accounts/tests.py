@@ -121,3 +121,13 @@ class TestGetAccounts(APITestCase):
         """
         가계부 삭제 복구 성공 테스트
         """
+        token = RefreshToken.for_user(self.user)
+        request_data = {"amount": 3500, "memo": "편의점 맥주", "is_delete": True}
+        header = {"HTTP_AUTHORIZATION": f"Bearer {token.access_token}"}
+        self.client.post(ACCOUNT_URL, request_data, **header)
+
+        account_restoration_url = ACCOUNT_DELETE_LIST_URL + "1/"
+
+        response = self.client.put(account_restoration_url, **header)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
