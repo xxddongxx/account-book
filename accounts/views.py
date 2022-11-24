@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from accounts import serializers
 from accounts.models import Account
@@ -9,7 +10,7 @@ from accounts.permissions import IsOwner
 
 
 class Accounts(APIView):
-
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsOwner]
 
     def post(self, request):
@@ -22,7 +23,9 @@ class Accounts(APIView):
         if serializer.is_valid():
             serializer.save(author=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"message": "Fail Create Account"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     def get(self, request):
         """
@@ -30,19 +33,21 @@ class Accounts(APIView):
         GET /api/v1/accounts/
         """
         user = request.user
+
         if user.is_staff:
-            accounts = Account.objects.all()
+            accounts = Account.objects.filter(is_delete=False)
         else:
             accounts = Account.objects.filter(author=user, is_delete=False)
 
         serializer = serializers.AccountsSerializer(accounts, many=True)
 
         if serializer.data:
-            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class AccountDetail(APIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsOwner]
 
     def get_account(self, pk, author):
@@ -79,16 +84,14 @@ class AccountDetail(APIView):
         """
         user = request.user
         account = self.get_account(pk=pk, author=user)
-        delete = {"is_delete": "true"}
-        serializer = serializers.AccountsIsDeleteSerializer(account, data=delete)
+        account.is_delete = True
+        account.save()
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AccountRestoration(APIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsOwner]
 
     def get(self, request):
@@ -98,9 +101,10 @@ class AccountRestoration(APIView):
         """
         user = request.user
         if user.is_staff:
-            accounts = Account.objects.all()
+            accounts = Account.objects.filter(is_delete=True)
         else:
             accounts = Account.objects.filter(author=user, is_delete=True)
+
         serializer = serializers.AccountsSerializer(accounts, many=True)
 
         if serializer.data:
@@ -109,6 +113,7 @@ class AccountRestoration(APIView):
 
 
 class AccountRestorationDetail(APIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsOwner]
 
     def get_account(self, pk, author):
@@ -131,10 +136,7 @@ class AccountRestorationDetail(APIView):
         """
         user = request.user
         account = self.get_account(pk=pk, author=user)
-        undelete = {"is_delete": "false"}
-        serializer = serializers.AccountsIsDeleteSerializer(account, data=undelete)
+        account.is_delete = False
+        account.save()
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_204_NO_CONTENT)
