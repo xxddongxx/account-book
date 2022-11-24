@@ -66,7 +66,7 @@ class TestGetAccounts(APITestCase):
 
     def test_get_accounts_list(self):
         """
-        가계부 조회 목록 성공 케이스
+        가계부 목록 조회 성공 케이스
         """
         token = RefreshToken.for_user(self.user)
         request_data = {"amount": 3500, "memo": "편의점 맥주"}
@@ -87,6 +87,15 @@ class TestGetAccounts(APITestCase):
         """
         가계부 삭제 성공 테스트
         """
+        token = RefreshToken.for_user(self.user)
+        request_data = {"amount": 3500, "memo": "편의점 맥주"}
+        header = {"HTTP_AUTHORIZATION": f"Bearer {token.access_token}"}
+        self.client.post(ACCOUNT_URL, request_data, **header)
+
+        delete_url = ACCOUNT_URL + "1/"
+        response = self.client.delete(delete_url, **header)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_get_accounts_delete_list(self):
         """
