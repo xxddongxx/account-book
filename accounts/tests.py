@@ -6,6 +6,7 @@ from users.models import User
 
 
 ACCOUNT_URL = "/api/v1/accounts/"
+ACCOUNT_DELETE_LIST_URL = "/api/v1/accounts/restoration/"
 
 
 def get_user():
@@ -92,8 +93,8 @@ class TestGetAccounts(APITestCase):
         header = {"HTTP_AUTHORIZATION": f"Bearer {token.access_token}"}
         self.client.post(ACCOUNT_URL, request_data, **header)
 
-        delete_url = ACCOUNT_URL + "1/"
-        response = self.client.delete(delete_url, **header)
+        delete_accounts_url = ACCOUNT_URL + "1/"
+        response = self.client.delete(delete_accounts_url, **header)
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
@@ -101,6 +102,20 @@ class TestGetAccounts(APITestCase):
         """
         가계부 삭제 목록 성공 테스트
         """
+        token = RefreshToken.for_user(self.user)
+        request_data = {"amount": 3500, "memo": "편의점 맥주", "is_delete": True}
+        header = {"HTTP_AUTHORIZATION": f"Bearer {token.access_token}"}
+        self.client.post(ACCOUNT_URL, request_data, **header)
+
+        response = self.client.get(ACCOUNT_DELETE_LIST_URL, **header)
+        response_data = response.json()[0]
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsInstance(response_data, dict)
+        self.assertIn("amount", response_data)
+        self.assertIn("memo", response_data)
+        self.assertIn("is_payment", response_data)
+        self.assertIn("is_delete", response_data)
 
     def test_restoration_accounts(self):
         """
