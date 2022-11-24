@@ -4,7 +4,7 @@
 # :bookmark_tabs: 목차
 * [개발 기간](#calendar-개발-기간)
 * [프로젝트 개요](#books-프로젝트-개요)
-    * [프로젝트 설명](#page_facing_up-프로젝트-설명))
+    * [프로젝트 설명](#page_facing_up-프로젝트-설명)
     * [프로젝트 요구사항](#clipboard-프로젝트-요구사항)
     * [사용 기술](#hammer-사용-기술)
     * [모델링](#floppy_disk-모델링)
