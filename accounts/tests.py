@@ -8,12 +8,16 @@ from users.models import User
 ACCOUNT_URL = "/api/v1/accounts/"
 
 
+def get_user():
+    user = User.objects.create(email="test@test.com", username="test")
+    user.set_password("test1234")
+    user.save()
+    return user
+
+
 class TESTAccountsCreate(APITestCase):
     def setUp(self):
-        user = User.objects.create(email="test@test.com", username="test")
-        user.set_password("test1234")
-        user.save()
-        self.user = user
+        self.user = get_user()
 
     def test_not_authorized(self):
         """
@@ -54,3 +58,42 @@ class TESTAccountsCreate(APITestCase):
         self.assertIn("memo", response_data)
         self.assertIn("is_payment", response_data)
         self.assertIn("is_delete", response_data)
+
+
+class TestGetAccounts(APITestCase):
+    def setUp(self):
+        self.user = get_user()
+
+    def test_get_accounts_list(self):
+        """
+        가계부 조회 목록 성공 케이스
+        """
+        token = RefreshToken.for_user(self.user)
+        request_data = {"amount": 3500, "memo": "편의점 맥주"}
+        header = {"HTTP_AUTHORIZATION": f"Bearer {token.access_token}"}
+        self.client.post(ACCOUNT_URL, request_data, **header)
+
+        response = self.client.get(ACCOUNT_URL, **header)
+        response_data = response.json()[0]
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsInstance(response_data, dict)
+        self.assertIn("amount", response_data)
+        self.assertIn("memo", response_data)
+        self.assertIn("is_payment", response_data)
+        self.assertIn("is_delete", response_data)
+
+    def test_accounts_delete(self):
+        """
+        가계부 삭제 성공 테스트
+        """
+
+    def test_get_accounts_delete_list(self):
+        """
+        가계부 삭제 목록 성공 테스트
+        """
+
+    def test_restoration_accounts(self):
+        """
+        가계부 삭제 복구 성공 테스트
+        """
